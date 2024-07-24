@@ -25,9 +25,7 @@ const createUser = asyncHandler(async (req, res, next) => {
 
     try {
         await newUser.save()
-        console.log('before token generate')
         generateToken(res, newUser._id)
-        console.log('after token generate')
         res.status(201).json({
             _id: newUser._id,
             username: newUser.username,
@@ -50,7 +48,6 @@ const userLogin = asyncHandler(async (req, res, next) => {
 
     const isPasswordMatch = await bcrypt.compare(password, user.password)
     if (!isPasswordMatch) throw new Error('Invalid credentials')
-
     generateToken(res, user._id)
     res.status(200).json({
         _id: user._id,
