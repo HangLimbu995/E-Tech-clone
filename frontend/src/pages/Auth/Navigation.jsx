@@ -22,7 +22,6 @@ const Navigation = () => {
     const [showSidebar, setShowSidebar] = useState(false)
 
     const toogleDropDown = () => {
-        console.log('drop down open', dropdownOpen)
         setDropdownOpen(!dropdownOpen)
     }
     const toogleSidebar = () => {
