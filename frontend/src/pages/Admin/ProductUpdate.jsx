@@ -1,72 +1,108 @@
-import { useState } from "react"
-import { useNavigate } from "react-router"
+import { useEffect, useState } from "react"
+import { useNavigate, useParams } from "react-router"
 import {
-    useCreateProductMutation,
+    useUpdateProductMutation,
+    useDeleteProductMutation,
+    useGetProductByIdQuery,
     useUplaodProductImageMutation,
 } from '../../redux/api/productApiSlice'
 import { useFetchCategoriesQuery } from "../../redux/api/categoryApiSlice"
-import { toast } from "react-toastify"
+import { toast } from 'react-toastify'
 import AdminMenu from "./AdminMenu"
 
-const ProductList = () => {
+const ProductUpdate = () => {
+    const params = useParams()
 
-    const [image, setImage] = useState('')
-    const [name, setName] = useState('')
-    const [description, setDescription] = useState('')
-    const [price, setPrice] = useState('')
-    const [category, setCategory] = useState('')
-    const [quantity, setQuantity] = useState('')
-    const [brand, setBrand] = useState('')
-    const [stock, setStock] = useState(0)
-    const [imageUrl, setImageUrl] = useState(null)
+    const { data: productData, refetch } = useGetProductByIdQuery(params._id)
+
+    const [image, setImage] = useState(productData?.image || "")
+    const [name, setName] = useState(productData?.name || "")
+    const [description, setDescription] = useState(productData?.description || "")
+    const [price, setPrice] = useState(productData?.price || "")
+    const [category, setCategory] = useState(productData?.category || "")
+    const [quantity, setQuantity] = useState(productData?.quantity || "")
+    const [brand, setBrand] = useState(productData?.brand || "")
+    const [stock, setStock] = useState(productData?.countInStock || "")
+
 
     const navigate = useNavigate()
 
+    const { data: categories = [] } = useFetchCategoriesQuery()
     const [uploadProductImage] = useUplaodProductImageMutation()
-    const [createProduct] = useCreateProductMutation()
-    const { data: categories } = useFetchCategoriesQuery()
+    const [updateProduct] = useUpdateProductMutation()
+    const [deleteProduct] = useDeleteProductMutation()
+
+    useEffect(() => {
+        if (productData && productData._id) {
+            setName(productData.name)
+            setDescription(productData.description)
+            setPrice(productData.price)
+            setCategory(productData.category)
+            setQuantity(productData.quantity)
+            setBrand(productData.brand)
+            setStock(productData.countInStock)
+            setImage(productData.image)
+        }
+    }, [productData])
 
     const uploadFileHandler = async (e) => {
         const formData = new FormData();
         formData.append('image', e.target.files[0])
-
         try {
             const res = await uploadProductImage(formData).unwrap()
-            toast.success(res.message)
+            toast.success('Image uploaded successfully')
             setImage(res.image)
-            setImageUrl(res.image)
+
         } catch (error) {
-            toast.error(error?.data?.message || error.error)
+            toast.error('Image upload failed.')
         }
     }
+
 
     const handleSubmit = async (e) => {
         e.preventDefault()
 
         try {
-            const productData = new FormData()
+            const formData = new FormData()
 
-            productData.append('image', image)
-            productData.append('name', name)
-            productData.append('description', description)
-            productData.append('price', price)
-            productData.append('category', category)
-            productData.append('quantity', quantity)
-            productData.append('brand', brand)
-            productData.append('countInStock', stock)
+            formData.append('image', image)
+            formData.append('name', name)
+            formData.append('description', description)
+            formData.append('price', price)
+            formData.append('category', category)
+            formData.append('quantity', quantity)
+            formData.append('brand', brand)
+            formData.append('countInStock', stock)
 
-            const { data } = await createProduct(productData)
+            const { data } = await updateProduct({ productId: params._id, formData })
 
             if (data.error) {
-                return toast.error('Product creation failed, Try again !')
+                return toast.error(data.error)
             } else {
-                toast.success(`${data.name} is create`)
-                navigate('/')
+                toast.success(`Product successfull  updated`)
+                navigate('/admin/allproductslist')
+                refetch()
             }
 
         } catch (error) {
             console.log(error)
-            return toast.error('Product creation failed, Try again !')
+            return toast.error('Product update failed, Try again !')
+        }
+    }
+
+    const handleDelete = async () => {
+        try {
+            let answer = window.confirm('Are you sure you want to delete this product ?')
+
+            if (!answer) return;
+
+            const { data } = await deleteProduct(params._id)
+            toast.success(`${data.name} is deleted`)
+            navigate('/admin/allproductslist')
+            refetch()
+        } catch (error) {
+            console.error(error)
+            toast.error('Delete failed. Try again.')
         }
     }
 
@@ -77,13 +113,12 @@ const ProductList = () => {
                 <div className="md:w-3/4 p-3">
                     <h2 className="text-2xl font-semibold mb-4">Create Product</h2>
 
-                    {imageUrl && (
+                    {image && (
                         <div className="text-center mb-4">
-                            <img src={imageUrl}
+                            <img src={image}
                                 alt='Product'
                                 className="mx-auto max-h-[200px] object-contain"
                             />
-                            
                         </div>
                     )}
 
@@ -201,10 +236,16 @@ const ProductList = () => {
                                 </select>
                             </div>
                         </div>
+
                         <button
                             onClick={handleSubmit}
+                            className='py-3 px-6 mt-4 rounded-lg text-lg font-bold bg-green-600 hover:bg-green-700 transition duration-300 text-white mr-4'>
+                            Update
+                        </button>
+                        <button
+                            onClick={handleDelete}
                             className='py-3 px-6 mt-4 rounded-lg text-lg font-bold bg-pink-600 hover:bg-pink-700 transition duration-300 text-white'>
-                            Create Product
+                            Delete
                         </button>
                     </div>
                 </div>
@@ -213,4 +254,4 @@ const ProductList = () => {
     )
 }
 
-export default ProductList
+export default ProductUpdate

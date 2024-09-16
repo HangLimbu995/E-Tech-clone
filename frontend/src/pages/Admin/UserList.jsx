@@ -3,6 +3,7 @@ import { useDeleteUserMutation, useGetUsersQuery, useUpdateUserMutation } from '
 import Loader from '../../components/Loader'
 import { FaCheck, FaEdit, FaTimes, FaTrash } from 'react-icons/fa'
 import { toast } from 'react-toastify'
+import AdminMenu from './AdminMenu'
 
 const UserList = () => {
 
@@ -63,7 +64,7 @@ const UserList = () => {
                 </div>
             ) : (
                 <div className='flex flex-col md:flex-row'>
-                    {/* <AdminMenu /> */}
+                    <AdminMenu />
                     <table className='w-full md:w-4/5 mx-auto'>
                         <thead>
                             <tr>
@@ -126,9 +127,9 @@ const UserList = () => {
                                     </td>
                                     <td className='px-4 py-2'>
                                         {user.isAdmin ? (
-                                            <FaTimes style={{ color: 'green' }} />
+                                            <FaCheck style={{ color: 'green' }} />
                                         ) : (
-                                            <FaTrash style={{ color: 'red' }} />
+                                            <FaTimes style={{ color: 'red' }} />
                                         )}
                                     </td>
                                     <td >
