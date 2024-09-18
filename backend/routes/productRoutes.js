@@ -24,7 +24,7 @@ router.route('/top').get(fetchTopProducts)
 router.route('/new').get(fetchNewProducts)
 
 router.route('/allproducts').get(fetchAllProducts)
-router.route('/:id/reviews').post(authorizeUser, authorizeAdmin, addProductReview)
+router.route('/:id/reviews').post(authorizeUser, checkId, addProductReview)
 
 router.route('/:id')
     .get(fetchProductById)
