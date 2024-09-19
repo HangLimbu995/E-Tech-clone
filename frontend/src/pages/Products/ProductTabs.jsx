@@ -52,7 +52,7 @@ const ProductTabs = ({
                             <form onSubmit={submitHandler}>
                                 <div className="my-2">
                                     <label htmlFor='rating' className="block text-xl mb-2">Rating</label>
-                                    <select id='rating' requried value={rating}
+                                    <select id='rating' required value={rating}
                                         onChange={e => setRating(e.target.value)}
                                         className="p-=2 border rounded-lg xl:w-[40rem] text-black"
                                     >
@@ -69,7 +69,7 @@ const ProductTabs = ({
                                     <label htmlFor="comment" className="block text-xl mb-2">
                                         Comment
                                     </label>
-                                    <textarea id='comment' rows='5' cols={40} requried value={comment}
+                                    <textarea id='comment' rows='5' cols={40} required value={comment}
                                         onChange={e => setComment(e.target.value)}
                                         className="p-2 border rounded-lg xl:w-[40rem] text-black"
                                     ></textarea>

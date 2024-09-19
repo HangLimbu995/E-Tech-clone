@@ -14,8 +14,6 @@ import {
 } from "../../Utils/localStorage";
 
 const HeartIcon = ({ product }) => {
-    // if (!product) return
-    console.info('product initial', product)
 
     const dispatch = useDispatch();
     const favorites = useSelector((state) => state.favorites) || [];

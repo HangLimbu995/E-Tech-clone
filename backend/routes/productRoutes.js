@@ -14,6 +14,7 @@ import {
     addProductReview,
     fetchTopProducts,
     fetchNewProducts,
+    filterProducts
 } from "../controllers/productController.js";
 
 router.route('/')
@@ -23,6 +24,9 @@ router.route('/')
 router.route('/top').get(fetchTopProducts)
 router.route('/new').get(fetchNewProducts)
 
+router.route('/filtered-products').post(filterProducts)
+
+
 router.route('/allproducts').get(fetchAllProducts)
 router.route('/:id/reviews').post(authorizeUser, checkId, addProductReview)
 
@@ -30,4 +34,5 @@ router.route('/:id')
     .get(fetchProductById)
     .put(authorizeUser, authorizeAdmin, formidable(), updateProductDetails)
     .delete(authorizeUser, authorizeAdmin, removeProduct)
+
 export default router;
