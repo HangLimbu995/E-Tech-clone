@@ -4,6 +4,8 @@ import { useLocation } from 'react-router'
 import { useProfileMutation } from '../../redux/api/userApiSlice'
 import { toast } from 'react-toastify'
 import { setCredentials } from '../../redux/features/auth/authSlice'
+import { Link } from 'react-router-dom'
+import Loader from '../../components/Loader'
 
 const Profile = () => {
     const [username, setUsername] = useState('')
@@ -82,7 +84,14 @@ const Profile = () => {
                                 onChange={(e) => setConfirmPassword(e.target.value)}
                             />
                         </div>
-                        <button type='submit' className='bg-pink-500 text-white py-2 px-4 rounded hover:bg-pink-600'>Update</button>
+                        <div className='flex justify-between'>
+                            <button type='submit' className='bg-pink-500 text-white py-2 px-4 rounded hover:bg-pink-600'>Update</button>
+
+                            <Link to='/user-orders'
+                                className="bg-pink-600 text-white py-2 px-4 rounded hover:bg-pink-700"
+                            >My Orders</Link>
+                        </div>
+                        {loadingUpdateProfile && <Loader />}
                     </form>
 
                 </div>
